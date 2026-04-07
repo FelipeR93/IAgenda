@@ -1,0 +1,412 @@
+/* ─── Reset e base ──────────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --cor-primaria: #2563eb;
+  --cor-primaria-escura: #1d4ed8;
+  --cor-secundaria: #10b981;
+  --cor-fundo: #f1f5f9;
+  --cor-branco: #ffffff;
+  --cor-texto: #1e293b;
+  --cor-texto-leve: #64748b;
+  --cor-borda: #cbd5e1;
+  --cor-erro: #ef4444;
+  --cor-erro-fundo: #fef2f2;
+  --raio: 12px;
+  --sombra: 0 4px 24px rgba(0, 0, 0, 0.10);
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--cor-fundo);
+  color: var(--cor-texto);
+  min-height: 100vh;
+}
+
+/* ─── Página de Login ────────────────────────────────────────────────────────── */
+.pagina-login {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #0ea5e9 100%);
+}
+
+.login-container {
+  width: 100%;
+  max-width: 420px;
+  padding: 1.5rem;
+}
+
+.login-card {
+  background: var(--cor-branco);
+  border-radius: var(--raio);
+  padding: 2.5rem;
+  box-shadow: var(--sombra);
+  text-align: center;
+}
+
+.login-logo {
+  font-size: 3.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.login-titulo {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--cor-primaria);
+  margin-bottom: 0.25rem;
+}
+
+.login-subtitulo {
+  color: var(--cor-texto-leve);
+  font-size: 0.95rem;
+  margin-bottom: 1.75rem;
+}
+
+.alerta-erro {
+  background: var(--cor-erro-fundo);
+  color: var(--cor-erro);
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.25rem;
+  font-size: 0.9rem;
+  text-align: left;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.campo-grupo {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  gap: 0.4rem;
+}
+
+.campo-grupo label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--cor-texto);
+}
+
+.campo-grupo input {
+  border: 1.5px solid var(--cor-borda);
+  border-radius: 8px;
+  padding: 0.65rem 0.9rem;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+  outline: none;
+}
+
+.campo-grupo input:focus {
+  border-color: var(--cor-primaria);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.btn-entrar {
+  background: var(--cor-primaria);
+  color: var(--cor-branco);
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-top: 0.5rem;
+}
+
+.btn-entrar:hover {
+  background: var(--cor-primaria-escura);
+}
+
+.erro-mensagem {
+  color: var(--cor-texto-leve);
+  margin: 1rem 0 1.5rem;
+  font-size: 0.95rem;
+}
+
+/* ─── Navbar ─────────────────────────────────────────────────────────────────── */
+.navbar {
+  background: var(--cor-branco);
+  border-bottom: 1px solid var(--cor-borda);
+  padding: 0.9rem 2rem;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.nav-logo {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--cor-primaria);
+  flex-shrink: 0;
+}
+
+.nav-links {
+  display: flex;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: var(--cor-texto-leve);
+  padding: 0.45rem 1rem;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: background 0.15s, color 0.15s;
+}
+
+.nav-link:hover {
+  background: var(--cor-fundo);
+  color: var(--cor-texto);
+}
+
+.nav-link.ativo {
+  background: #eff6ff;
+  color: var(--cor-primaria);
+  font-weight: 600;
+}
+
+.form-logout {
+  margin-left: auto;
+}
+
+.btn-logout {
+  background: transparent;
+  border: 1.5px solid var(--cor-borda);
+  border-radius: 6px;
+  padding: 0.4rem 0.9rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  color: var(--cor-texto-leve);
+  transition: all 0.2s;
+}
+
+.btn-logout:hover {
+  background: var(--cor-erro-fundo);
+  border-color: var(--cor-erro);
+  color: var(--cor-erro);
+}
+
+/* ─── Conteúdo principal ─────────────────────────────────────────────────────── */
+.conteudo {
+  padding: 2.5rem 1.5rem;
+  display: flex;
+  justify-content: center;
+}
+
+/* ─── Calendário (estilo geladeira) ──────────────────────────────────────────── */
+.calendario-wrapper {
+  background: var(--cor-branco);
+  border-radius: 16px;
+  box-shadow: var(--sombra), 0 0 0 3px #e2e8f0;
+  overflow: hidden;
+  max-width: 560px;
+  width: 100%;
+}
+
+.calendario-cabecalho {
+  background: linear-gradient(135deg, #dc2626, #ef4444);
+  color: white;
+  text-align: center;
+  padding: 1.2rem;
+  position: relative;
+}
+
+.calendario-cabecalho::before {
+  content: '';
+  display: block;
+  width: 28px;
+  height: 28px;
+  background: #fbbf24;
+  border-radius: 50%;
+  margin: 0 auto 0.5rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+
+.calendario-cabecalho h2 {
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.calendario {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  border-top: 3px solid #e2e8f0;
+}
+
+.dia-semana {
+  background: #f8fafc;
+  text-align: center;
+  padding: 0.6rem 0.25rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--cor-texto-leve);
+  border-bottom: 2px solid #e2e8f0;
+  border-right: 1px solid #e2e8f0;
+}
+
+.dia-semana:last-child {
+  border-right: none;
+}
+
+.dia {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--cor-texto);
+  border-bottom: 1px solid #e2e8f0;
+  border-right: 1px solid #e2e8f0;
+  transition: background 0.15s;
+  cursor: default;
+}
+
+.dia:hover:not(.vazio) {
+  background: #eff6ff;
+  color: var(--cor-primaria);
+}
+
+/* Domingos (cada 7 começando do índice 0 da linha de dias) */
+.dia:nth-child(7n+1):not(.dia-semana) {
+  color: #dc2626;
+}
+
+/* Sábados */
+.dia:nth-child(7n):not(.dia-semana) {
+  color: #2563eb;
+  border-right: none;
+}
+
+.dia.vazio {
+  background: #fafafa;
+  cursor: default;
+}
+
+/* Última linha sem borda embaixo */
+.dia:nth-last-child(-n+7) {
+  border-bottom: none;
+}
+
+/* ─── Lista de Profissionais e Aprendizes ────────────────────────────────────── */
+.lista-wrapper {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  max-width: 860px;
+  width: 100%;
+}
+
+@media (max-width: 640px) {
+  .lista-wrapper {
+    grid-template-columns: 1fr;
+  }
+}
+
+.lista-secao {
+  background: var(--cor-branco);
+  border-radius: var(--raio);
+  box-shadow: var(--sombra);
+  overflow: hidden;
+}
+
+.lista-cabecalho {
+  padding: 1.2rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: white;
+}
+
+.profissionais-cabecalho {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+}
+
+.aprendizes-cabecalho {
+  background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.lista-icone {
+  font-size: 1.5rem;
+}
+
+.lista-cabecalho h2 {
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.lista-itens {
+  list-style: none;
+  padding: 0.75rem 0;
+}
+
+.lista-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.85rem 1.5rem;
+  border-bottom: 1px solid #f1f5f9;
+  transition: background 0.15s;
+}
+
+.lista-item:last-child {
+  border-bottom: none;
+}
+
+.lista-item:hover {
+  background: #f8fafc;
+}
+
+.item-numero {
+  background: #eff6ff;
+  color: var(--cor-primaria);
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.aprendiz-numero {
+  background: #d1fae5;
+  color: #059669;
+}
+
+.item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.item-nome {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--cor-texto);
+}
+
+.item-detalhe {
+  font-size: 0.8rem;
+  color: var(--cor-texto-leve);
+}

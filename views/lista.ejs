@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IAgenda – Lista</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body class="pagina-interna">
+
+  <!-- Barra de navegação -->
+  <nav class="navbar">
+    <div class="nav-logo">📅 IAgenda</div>
+    <div class="nav-links">
+      <a href="/agenda" class="nav-link">Agenda</a>
+      <a href="/lista" class="nav-link ativo">Lista</a>
+    </div>
+    <form action="/logout" method="POST" class="form-logout">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+      <button type="submit" class="btn-logout">Sair</button>
+    </form>
+  </nav>
+
+  <!-- Conteúdo principal -->
+  <main class="conteudo">
+    <div class="lista-wrapper">
+
+      <!-- Profissionais -->
+      <section class="lista-secao">
+        <div class="lista-cabecalho profissionais-cabecalho">
+          <span class="lista-icone">🏆</span>
+          <h2>Profissionais</h2>
+        </div>
+        <ul class="lista-itens">
+          <% profissionais.forEach((p, i) => { %>
+          <li class="lista-item">
+            <div class="item-numero"><%= i + 1 %></div>
+            <div class="item-info">
+              <span class="item-nome"><%= p.nome %></span>
+              <span class="item-detalhe"><%= p.especialidade %></span>
+            </div>
+          </li>
+          <% }) %>
+        </ul>
+      </section>
+
+      <!-- Aprendizes -->
+      <section class="lista-secao">
+        <div class="lista-cabecalho aprendizes-cabecalho">
+          <span class="lista-icone">🌱</span>
+          <h2>Aprendizes</h2>
+        </div>
+        <ul class="lista-itens">
+          <% aprendizes.forEach((a, i) => { %>
+          <li class="lista-item">
+            <div class="item-numero aprendiz-numero"><%= i + 1 %></div>
+            <div class="item-info">
+              <span class="item-nome"><%= a.nome %></span>
+              <span class="item-detalhe"><%= a.area %></span>
+            </div>
+          </li>
+          <% }) %>
+        </ul>
+      </section>
+
+    </div>
+  </main>
+
+</body>
+</html>
