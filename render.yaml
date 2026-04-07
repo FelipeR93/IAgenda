@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: iagenda
+    env: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: iagenda-db
+          property: connectionString
+      - key: APP_LOGIN
+        value: felipe
+      - key: APP_PASSWORD_HASH
+        sync: false  # Definir manualmente no painel do Render
+
+databases:
+  - name: iagenda-db
+    databaseName: iagenda
+    user: iagenda_user
+    plan: free

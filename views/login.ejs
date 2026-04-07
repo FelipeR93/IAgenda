@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IAgenda – Login</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body class="pagina-login">
+  <div class="login-container">
+    <div class="login-card">
+      <div class="login-logo">📅</div>
+      <h1 class="login-titulo">IAgenda</h1>
+      <p class="login-subtitulo">Acesso restrito</p>
+
+      <% if (erro) { %>
+        <div class="alerta-erro" role="alert">
+          <span>⚠️</span> <%= erro %>
+        </div>
+      <% } %>
+
+      <form action="/login" method="POST" class="login-form" novalidate>
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+
+        <div class="campo-grupo">
+          <label for="usuario">Usuário</label>
+          <input
+            type="text"
+            id="usuario"
+            name="usuario"
+            required
+            autocomplete="username"
+            placeholder="Digite seu usuário"
+            maxlength="64"
+          />
+        </div>
+
+        <div class="campo-grupo">
+          <label for="senha">Senha</label>
+          <input
+            type="password"
+            id="senha"
+            name="senha"
+            required
+            autocomplete="current-password"
+            placeholder="Digite sua senha"
+            maxlength="128"
+          />
+        </div>
+
+        <button type="submit" class="btn-entrar">Entrar</button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>
