@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IAgenda – Cadastros</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+<div id="toast-container"></div>
+
+<div class="app-layout">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">
+        <div class="sidebar-logo-icon">🏥</div>
+        <div class="sidebar-logo-text">
+          <h2>IAgenda</h2>
+          <span>Sistema de Agendamentos</span>
+        </div>
+      </div>
+    </div>
+    <div class="sidebar-nav">
+      <div class="nav-section-title">Menu Principal</div>
+      <a href="/dashboard" class="nav-item" data-page="dashboard">
+        <span class="nav-icon">📊</span> Dashboard
+      </a>
+      <a href="/agendamento" class="nav-item" data-page="agendamento">
+        <span class="nav-icon">📅</span> Agendamentos
+      </a>
+      <a href="/cadastro" class="nav-item active" data-page="cadastro">
+        <span class="nav-icon">📋</span> Cadastros
+      </a>
+    </div>
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-avatar">👤</div>
+        <div class="user-details">
+          <div class="user-name" id="user-name">Carregando...</div>
+          <div class="user-role">Administrador</div>
+        </div>
+      </div>
+      <button class="btn btn-outline btn-sm btn-full" style="margin-top:8px;" onclick="logout()">
+        🚪 Sair
+      </button>
+    </div>
+  </nav>
+
+  <!-- CONTEÚDO -->
+  <div class="main-content">
+    <div class="topbar">
+      <div class="topbar-title">
+        <h1>📋 Cadastros</h1>
+        <p>Gerencie profissionais, aprendizes e salas</p>
+      </div>
+    </div>
+
+    <div class="page-content">
+
+      <!-- TABS -->
+      <div class="tabs" id="cadastro-tabs">
+        <button class="tab-btn active" data-tab="profissionais" onclick="switchTab('profissionais')">
+          👨‍⚕️ Profissionais
+        </button>
+        <button class="tab-btn" data-tab="aprendizes" onclick="switchTab('aprendizes')">
+          🧒 Aprendizes
+        </button>
+        <button class="tab-btn" data-tab="salas" onclick="switchTab('salas')">
+          🚪 Salas
+        </button>
+      </div>
+
+      <!-- ===== TAB: PROFISSIONAIS ===== -->
+      <div class="tab-panel active" id="tab-profissionais">
+        <div class="section-header">
+          <h2>👨‍⚕️ Profissionais Cadastrados</h2>
+          <button class="btn btn-accent" onclick="openModalProfissional()">➕ Novo Profissional</button>
+        </div>
+        <div class="card">
+          <div class="card-body" style="padding:0;">
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Nome</th>
+                    <th>Especialidade</th>
+                    <th>Telefone</th>
+                    <th>Email</th>
+                    <th>Dias Disponíveis</th>
+                    <th>Horário</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="prof-tbody">
+                  <tr><td colspan="7"><div class="loading"><div class="spinner"></div></div></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== TAB: APRENDIZES ===== -->
+      <div class="tab-panel" id="tab-aprendizes">
+        <div class="section-header">
+          <h2>🧒 Aprendizes Cadastrados</h2>
+          <button class="btn btn-success" onclick="openModalAprendiz()">➕ Novo Aprendiz</button>
+        </div>
+        <div class="card">
+          <div class="card-body" style="padding:0;">
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Nome</th>
+                    <th>Nascimento</th>
+                    <th>Responsável</th>
+                    <th>Telefone</th>
+                    <th>Necessidades</th>
+                    <th>Área</th>
+                    <th>Horas/Semana</th>
+                    <th>Dias Preferidos</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="ap-tbody">
+                  <tr><td colspan="9"><div class="loading"><div class="spinner"></div></div></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== TAB: SALAS ===== -->
+      <div class="tab-panel" id="tab-salas">
+        <div class="section-header">
+          <h2>🚪 Salas de Atendimento</h2>
+          <button class="btn btn-primary" onclick="openModalSala()">➕ Nova Sala</button>
+        </div>
+        <div class="card">
+          <div class="card-body" style="padding:0;">
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Nome</th>
+                    <th>Capacidade</th>
+                    <th>Recursos / Descrição</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="sala-tbody">
+                  <tr><td colspan="4"><div class="loading"><div class="spinner"></div></div></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL PROFISSIONAL ===== -->
+<div class="modal-overlay" id="modal-prof">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modal-prof-title">👨‍⚕️ Novo Profissional</h3>
+      <button class="modal-close" onclick="closeModal('modal-prof')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="prof-id" />
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nome Completo *</label>
+          <input type="text" id="prof-nome" placeholder="Nome do profissional" required />
+        </div>
+        <div class="form-group">
+          <label>Especialidade *</label>
+          <select id="prof-especialidade">
+            <option value="">Selecione...</option>
+            <option>Psicopedagogia</option>
+            <option>Fonoaudiologia</option>
+            <option>Psicologia</option>
+            <option>Terapia Ocupacional</option>
+            <option>Fisioterapia</option>
+            <option>Neurologia</option>
+            <option>Neuropediatria</option>
+            <option>Outro</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Telefone</label>
+          <input type="tel" id="prof-telefone" placeholder="(00) 00000-0000" />
+        </div>
+        <div class="form-group">
+          <label>E-mail</label>
+          <input type="email" id="prof-email" placeholder="email@exemplo.com" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Registro Profissional</label>
+          <input type="text" id="prof-registro" placeholder="CRP, CRFa, etc." />
+        </div>
+        <div class="form-group">
+          <label>Carga Horária Semanal</label>
+          <input type="number" id="prof-carga" placeholder="Ex: 40" min="1" max="60" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Dias Disponíveis</label>
+        <div class="availability-grid" id="prof-dias"></div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Horário de Início</label>
+          <input type="time" id="prof-hora-inicio" value="08:00" />
+        </div>
+        <div class="form-group">
+          <label>Horário de Fim</label>
+          <input type="time" id="prof-hora-fim" value="17:00" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Observações</label>
+        <textarea id="prof-obs" placeholder="Informações adicionais..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-prof')">Cancelar</button>
+      <button class="btn btn-accent" onclick="salvarProfissional()">💾 Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL APRENDIZ ===== -->
+<div class="modal-overlay" id="modal-ap">
+  <div class="modal" style="max-width:640px;">
+    <div class="modal-header">
+      <h3 id="modal-ap-title">🧒 Novo Aprendiz</h3>
+      <button class="modal-close" onclick="closeModal('modal-ap')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="ap-id" />
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nome Completo *</label>
+          <input type="text" id="ap-nome" placeholder="Nome do aprendiz" required />
+        </div>
+        <div class="form-group">
+          <label>Data de Nascimento</label>
+          <input type="date" id="ap-nascimento" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nome do Responsável</label>
+          <input type="text" id="ap-responsavel" placeholder="Nome do pai/mãe/responsável" />
+        </div>
+        <div class="form-group">
+          <label>Telefone de Contato *</label>
+          <input type="tel" id="ap-telefone" placeholder="(00) 00000-0000" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>E-mail</label>
+        <input type="email" id="ap-email" placeholder="email@exemplo.com" />
+      </div>
+
+      <div class="section-divider"></div>
+
+      <div class="form-group">
+        <label>Necessidades / Diagnóstico</label>
+        <div class="needs-grid" id="ap-necessidades"></div>
+      </div>
+
+      <div class="form-group">
+        <label>Área de Consulta Necessária *</label>
+        <select id="ap-area">
+          <option value="">Selecione a área principal...</option>
+          <option>Psicopedagogia</option>
+          <option>Fonoaudiologia</option>
+          <option>Psicologia</option>
+          <option>Terapia Ocupacional</option>
+          <option>Fisioterapia</option>
+          <option>Neurologia</option>
+          <option>Neuropediatria</option>
+          <option>Multidisciplinar</option>
+        </select>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Horas de Atendimento por Semana</label>
+          <input type="number" id="ap-horas" placeholder="Ex: 2" min="1" max="40" />
+        </div>
+        <div class="form-group">
+          <label>Frequência de Consultas</label>
+          <select id="ap-frequencia">
+            <option value="">Selecione...</option>
+            <option value="semanal">Semanal</option>
+            <option value="quinzenal">Quinzenal</option>
+            <option value="mensal">Mensal</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Dias Preferidos para Atendimento</label>
+        <div class="availability-grid" id="ap-dias"></div>
+      </div>
+
+      <div class="form-group">
+        <label>Observações / Histórico</label>
+        <textarea id="ap-obs" placeholder="Informações adicionais sobre o aprendiz..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-ap')">Cancelar</button>
+      <button class="btn btn-success" onclick="salvarAprendiz()">💾 Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL SALA ===== -->
+<div class="modal-overlay" id="modal-sala">
+  <div class="modal" style="max-width:480px;">
+    <div class="modal-header">
+      <h3 id="modal-sala-title">🚪 Nova Sala</h3>
+      <button class="modal-close" onclick="closeModal('modal-sala')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="sala-id" />
+
+      <div class="form-group">
+        <label>Nome / Número da Sala *</label>
+        <input type="text" id="sala-nome" placeholder="Ex: Sala 01, Sala Verde..." required />
+      </div>
+
+      <div class="form-group">
+        <label>Capacidade (pessoas)</label>
+        <input type="number" id="sala-capacidade" placeholder="Ex: 4" min="1" />
+      </div>
+
+      <div class="form-group">
+        <label>Recursos Disponíveis</label>
+        <input type="text" id="sala-recursos" placeholder="Ex: TV, Mesa, Brinquedos, Espelho..." />
+      </div>
+
+      <div class="form-group">
+        <label>Descrição</label>
+        <textarea id="sala-descricao" placeholder="Descrição da sala..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-sala')">Cancelar</button>
+      <button class="btn btn-primary" onclick="salvarSala()">💾 Salvar</button>
+    </div>
+  </div>
+</div>
+
+<script src="/js/utils.js"></script>
+<script>
+  loadUserInfo();
+
+  let profissionais = [];
+  let aprendizes = [];
+  let salas = [];
+
+  // ===== TABS =====
+  function switchTab(tab) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(`tab-${tab}`).classList.add('active');
+    document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+  }
+
+  // Tab via hash na URL
+  const hash = window.location.hash.replace('#', '');
+  if (['profissional', 'aprendiz', 'sala'].includes(hash)) {
+    const map = { profissional: 'profissionais', aprendiz: 'aprendizes', sala: 'salas' };
+    switchTab(map[hash]);
+  }
+
+  // ===== MODAL =====
+  function openModal(id) {
+    document.getElementById(id).classList.add('open');
+  }
+
+  function closeModal(id) {
+    document.getElementById(id).classList.remove('open');
+  }
+
+  document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) overlay.classList.remove('open');
+    });
+  });
+
+  // ===== LOAD ALL DATA =====
+  async function loadAll() {
+    try {
+      [profissionais, aprendizes, salas] = await Promise.all([
+        api('GET', '/api/profissionais'),
+        api('GET', '/api/aprendizes'),
+        api('GET', '/api/salas')
+      ]);
+      renderProfissionais();
+      renderAprendizes();
+      renderSalas();
+    } catch (err) {
+      showToast('Erro ao carregar dados: ' + err.message, 'error');
+    }
+  }
+
+  // ===== DIAS LABELS =====
+  const diasLabels = {
+    domingo: 'Dom', segunda: 'Seg', terca: 'Ter',
+    quarta: 'Qua', quinta: 'Qui', sexta: 'Sex', sabado: 'Sáb'
+  };
+
+  function renderDias(dias) {
+    if (!dias || dias.length === 0) return '–';
+    return `<div class="tag-list">${dias.map(d => `<span class="tag">${diasLabels[d] || d}</span>`).join('')}</div>`;
+  }
+
+  // ===== PROFISSIONAIS =====
+  function renderProfissionais() {
+    const tbody = document.getElementById('prof-tbody');
+    if (profissionais.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state">
+        <div class="empty-icon">👨‍⚕️</div>
+        <h4>Nenhum profissional cadastrado</h4>
+        <p>Clique em "Novo Profissional" para começar.</p>
+      </div></td></tr>`;
+      return;
+    }
+    tbody.innerHTML = profissionais.map(p => `<tr>
+      <td><strong>${p.nome}</strong></td>
+      <td><span class="tag">${p.especialidade || '–'}</span></td>
+      <td>${p.telefone || '–'}</td>
+      <td>${p.email || '–'}</td>
+      <td>${renderDias(p.dias_disponiveis)}</td>
+      <td>${p.hora_inicio && p.hora_fim ? `${p.hora_inicio} – ${p.hora_fim}` : '–'}</td>
+      <td style="white-space:nowrap;">
+        <button class="btn btn-outline btn-sm" onclick="editarProfissional('${p.id}')">✏️</button>
+        <button class="btn btn-danger btn-sm" onclick="excluirProfissional('${p.id}')">🗑️</button>
+      </td>
+    </tr>`).join('');
+  }
+
+  function openModalProfissional(p = null) {
+    document.getElementById('modal-prof-title').textContent = p ? '✏️ Editar Profissional' : '👨‍⚕️ Novo Profissional';
+    document.getElementById('prof-id').value = p ? p.id : '';
+    document.getElementById('prof-nome').value = p ? p.nome : '';
+    document.getElementById('prof-especialidade').value = p ? (p.especialidade || '') : '';
+    document.getElementById('prof-telefone').value = p ? (p.telefone || '') : '';
+    document.getElementById('prof-email').value = p ? (p.email || '') : '';
+    document.getElementById('prof-registro').value = p ? (p.registro || '') : '';
+    document.getElementById('prof-carga').value = p ? (p.carga_horaria || '') : '';
+    document.getElementById('prof-hora-inicio').value = p ? (p.hora_inicio || '08:00') : '08:00';
+    document.getElementById('prof-hora-fim').value = p ? (p.hora_fim || '17:00') : '17:00';
+    document.getElementById('prof-obs').value = p ? (p.observacoes || '') : '';
+    initDayChips('prof-dias', p ? (p.dias_disponiveis || []) : []);
+    openModal('modal-prof');
+  }
+
+  async function salvarProfissional() {
+    const id = document.getElementById('prof-id').value;
+    const nome = document.getElementById('prof-nome').value.trim();
+    if (!nome) { showToast('Informe o nome do profissional', 'error'); return; }
+
+    const payload = {
+      nome,
+      especialidade: document.getElementById('prof-especialidade').value,
+      telefone: document.getElementById('prof-telefone').value,
+      email: document.getElementById('prof-email').value,
+      registro: document.getElementById('prof-registro').value,
+      carga_horaria: document.getElementById('prof-carga').value,
+      hora_inicio: document.getElementById('prof-hora-inicio').value,
+      hora_fim: document.getElementById('prof-hora-fim').value,
+      observacoes: document.getElementById('prof-obs').value,
+      dias_disponiveis: getSelectedDays('prof-dias')
+    };
+
+    try {
+      if (id) {
+        await api('PUT', `/api/profissionais/${id}`, payload);
+        showToast('Profissional atualizado!', 'success');
+      } else {
+        await api('POST', '/api/profissionais', payload);
+        showToast('Profissional cadastrado!', 'success');
+      }
+      closeModal('modal-prof');
+      loadAll();
+    } catch (err) {
+      showToast('Erro ao salvar: ' + err.message, 'error');
+    }
+  }
+
+  function editarProfissional(id) {
+    const p = profissionais.find(p => p.id === id);
+    if (p) openModalProfissional(p);
+  }
+
+  async function excluirProfissional(id) {
+    confirmDelete('Confirma a exclusão deste profissional?', async () => {
+      try {
+        await api('DELETE', `/api/profissionais/${id}`);
+        showToast('Profissional excluído.', 'success');
+        loadAll();
+      } catch (err) {
+        showToast('Erro ao excluir: ' + err.message, 'error');
+      }
+    });
+  }
+
+  // ===== APRENDIZES =====
+  function renderAprendizes() {
+    const tbody = document.getElementById('ap-tbody');
+    if (aprendizes.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="9"><div class="empty-state">
+        <div class="empty-icon">🧒</div>
+        <h4>Nenhum aprendiz cadastrado</h4>
+        <p>Clique em "Novo Aprendiz" para começar.</p>
+      </div></td></tr>`;
+      return;
+    }
+    tbody.innerHTML = aprendizes.map(a => `<tr>
+      <td><strong>${a.nome}</strong></td>
+      <td>${a.nascimento ? formatDate(a.nascimento) : '–'}</td>
+      <td>${a.responsavel || '–'}</td>
+      <td>${a.telefone || '–'}</td>
+      <td>${a.necessidades && a.necessidades.length
+        ? `<div class="tag-list">${a.necessidades.map(n => `<span class="tag" style="background:var(--accent-light);color:#00838F">${n}</span>`).join('')}</div>`
+        : '–'}</td>
+      <td>${a.area ? `<span class="tag">${a.area}</span>` : '–'}</td>
+      <td>${a.horas_semana ? `${a.horas_semana}h` : '–'}</td>
+      <td>${renderDias(a.dias_preferidos)}</td>
+      <td style="white-space:nowrap;">
+        <button class="btn btn-outline btn-sm" onclick="editarAprendiz('${a.id}')">✏️</button>
+        <button class="btn btn-danger btn-sm" onclick="excluirAprendiz('${a.id}')">🗑️</button>
+      </td>
+    </tr>`).join('');
+  }
+
+  function openModalAprendiz(a = null) {
+    document.getElementById('modal-ap-title').textContent = a ? '✏️ Editar Aprendiz' : '🧒 Novo Aprendiz';
+    document.getElementById('ap-id').value = a ? a.id : '';
+    document.getElementById('ap-nome').value = a ? a.nome : '';
+    document.getElementById('ap-nascimento').value = a ? (a.nascimento || '') : '';
+    document.getElementById('ap-responsavel').value = a ? (a.responsavel || '') : '';
+    document.getElementById('ap-telefone').value = a ? (a.telefone || '') : '';
+    document.getElementById('ap-email').value = a ? (a.email || '') : '';
+    document.getElementById('ap-area').value = a ? (a.area || '') : '';
+    document.getElementById('ap-horas').value = a ? (a.horas_semana || '') : '';
+    document.getElementById('ap-frequencia').value = a ? (a.frequencia || '') : '';
+    document.getElementById('ap-obs').value = a ? (a.observacoes || '') : '';
+    initNeedChips('ap-necessidades', a ? (a.necessidades || []) : []);
+    initDayChips('ap-dias', a ? (a.dias_preferidos || []) : []);
+    openModal('modal-ap');
+  }
+
+  async function salvarAprendiz() {
+    const id = document.getElementById('ap-id').value;
+    const nome = document.getElementById('ap-nome').value.trim();
+    if (!nome) { showToast('Informe o nome do aprendiz', 'error'); return; }
+
+    const payload = {
+      nome,
+      nascimento: document.getElementById('ap-nascimento').value,
+      responsavel: document.getElementById('ap-responsavel').value,
+      telefone: document.getElementById('ap-telefone').value,
+      email: document.getElementById('ap-email').value,
+      area: document.getElementById('ap-area').value,
+      horas_semana: document.getElementById('ap-horas').value,
+      frequencia: document.getElementById('ap-frequencia').value,
+      observacoes: document.getElementById('ap-obs').value,
+      necessidades: getSelectedNeeds('ap-necessidades'),
+      dias_preferidos: getSelectedDays('ap-dias')
+    };
+
+    try {
+      if (id) {
+        await api('PUT', `/api/aprendizes/${id}`, payload);
+        showToast('Aprendiz atualizado!', 'success');
+      } else {
+        await api('POST', '/api/aprendizes', payload);
+        showToast('Aprendiz cadastrado!', 'success');
+      }
+      closeModal('modal-ap');
+      loadAll();
+    } catch (err) {
+      showToast('Erro ao salvar: ' + err.message, 'error');
+    }
+  }
+
+  function editarAprendiz(id) {
+    const a = aprendizes.find(a => a.id === id);
+    if (a) openModalAprendiz(a);
+  }
+
+  async function excluirAprendiz(id) {
+    confirmDelete('Confirma a exclusão deste aprendiz?', async () => {
+      try {
+        await api('DELETE', `/api/aprendizes/${id}`);
+        showToast('Aprendiz excluído.', 'success');
+        loadAll();
+      } catch (err) {
+        showToast('Erro ao excluir: ' + err.message, 'error');
+      }
+    });
+  }
+
+  // ===== SALAS =====
+  function renderSalas() {
+    const tbody = document.getElementById('sala-tbody');
+    if (salas.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="4"><div class="empty-state">
+        <div class="empty-icon">🚪</div>
+        <h4>Nenhuma sala cadastrada</h4>
+        <p>Clique em "Nova Sala" para começar.</p>
+      </div></td></tr>`;
+      return;
+    }
+    tbody.innerHTML = salas.map(s => `<tr>
+      <td><strong>${s.nome}</strong></td>
+      <td>${s.capacidade ? `${s.capacidade} pessoa(s)` : '–'}</td>
+      <td>${s.recursos || s.descricao || '–'}</td>
+      <td style="white-space:nowrap;">
+        <button class="btn btn-outline btn-sm" onclick="editarSala('${s.id}')">✏️</button>
+        <button class="btn btn-danger btn-sm" onclick="excluirSala('${s.id}')">🗑️</button>
+      </td>
+    </tr>`).join('');
+  }
+
+  function openModalSala(s = null) {
+    document.getElementById('modal-sala-title').textContent = s ? '✏️ Editar Sala' : '🚪 Nova Sala';
+    document.getElementById('sala-id').value = s ? s.id : '';
+    document.getElementById('sala-nome').value = s ? s.nome : '';
+    document.getElementById('sala-capacidade').value = s ? (s.capacidade || '') : '';
+    document.getElementById('sala-recursos').value = s ? (s.recursos || '') : '';
+    document.getElementById('sala-descricao').value = s ? (s.descricao || '') : '';
+    openModal('modal-sala');
+  }
+
+  async function salvarSala() {
+    const id = document.getElementById('sala-id').value;
+    const nome = document.getElementById('sala-nome').value.trim();
+    if (!nome) { showToast('Informe o nome da sala', 'error'); return; }
+
+    const payload = {
+      nome,
+      capacidade: document.getElementById('sala-capacidade').value,
+      recursos: document.getElementById('sala-recursos').value,
+      descricao: document.getElementById('sala-descricao').value
+    };
+
+    try {
+      if (id) {
+        await api('PUT', `/api/salas/${id}`, payload);
+        showToast('Sala atualizada!', 'success');
+      } else {
+        await api('POST', '/api/salas', payload);
+        showToast('Sala cadastrada!', 'success');
+      }
+      closeModal('modal-sala');
+      loadAll();
+    } catch (err) {
+      showToast('Erro ao salvar: ' + err.message, 'error');
+    }
+  }
+
+  function editarSala(id) {
+    const s = salas.find(s => s.id === id);
+    if (s) openModalSala(s);
+  }
+
+  async function excluirSala(id) {
+    confirmDelete('Confirma a exclusão desta sala?', async () => {
+      try {
+        await api('DELETE', `/api/salas/${id}`);
+        showToast('Sala excluída.', 'success');
+        loadAll();
+      } catch (err) {
+        showToast('Erro ao excluir: ' + err.message, 'error');
+      }
+    });
+  }
+
+  loadAll();
+</script>
+
+</body>
+</html>

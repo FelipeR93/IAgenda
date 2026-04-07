@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IAgenda – Agendamentos</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+<div id="toast-container"></div>
+
+<div class="app-layout">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">
+        <div class="sidebar-logo-icon">🏥</div>
+        <div class="sidebar-logo-text">
+          <h2>IAgenda</h2>
+          <span>Sistema de Agendamentos</span>
+        </div>
+      </div>
+    </div>
+    <div class="sidebar-nav">
+      <div class="nav-section-title">Menu Principal</div>
+      <a href="/dashboard" class="nav-item" data-page="dashboard">
+        <span class="nav-icon">📊</span> Dashboard
+      </a>
+      <a href="/agendamento" class="nav-item active" data-page="agendamento">
+        <span class="nav-icon">📅</span> Agendamentos
+      </a>
+      <a href="/cadastro" class="nav-item" data-page="cadastro">
+        <span class="nav-icon">📋</span> Cadastros
+      </a>
+    </div>
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-avatar">👤</div>
+        <div class="user-details">
+          <div class="user-name" id="user-name">Carregando...</div>
+          <div class="user-role">Administrador</div>
+        </div>
+      </div>
+      <button class="btn btn-outline btn-sm btn-full" style="margin-top:8px;" onclick="logout()">
+        🚪 Sair
+      </button>
+    </div>
+  </nav>
+
+  <!-- CONTEÚDO -->
+  <div class="main-content">
+    <div class="topbar">
+      <div class="topbar-title">
+        <h1>📅 Agendamentos</h1>
+        <p>Gerencie as consultas agendadas</p>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-primary" onclick="openModal()">
+          ➕ Novo Agendamento
+        </button>
+      </div>
+    </div>
+
+    <div class="page-content">
+
+      <!-- FILTROS -->
+      <div class="card" style="margin-bottom:20px;">
+        <div class="card-body" style="padding: 16px 20px;">
+          <div style="display:flex; gap:12px; align-items:flex-end; flex-wrap:wrap;">
+            <div class="form-group" style="margin:0; flex:1; min-width:150px;">
+              <label>Filtrar por Data</label>
+              <input type="date" id="filtro-data" />
+            </div>
+            <div class="form-group" style="margin:0; flex:1; min-width:150px;">
+              <label>Filtrar por Status</label>
+              <select id="filtro-status">
+                <option value="">Todos</option>
+                <option value="agendado">Agendado</option>
+                <option value="confirmado">Confirmado</option>
+                <option value="realizado">Realizado</option>
+                <option value="cancelado">Cancelado</option>
+              </select>
+            </div>
+            <div class="form-group" style="margin:0; flex:1; min-width:150px;">
+              <label>Filtrar por Profissional</label>
+              <select id="filtro-profissional">
+                <option value="">Todos</option>
+              </select>
+            </div>
+            <div style="display:flex; gap:8px;">
+              <button class="btn btn-primary btn-sm" onclick="aplicarFiltros()">🔍 Filtrar</button>
+              <button class="btn btn-outline btn-sm" onclick="limparFiltros()">✕ Limpar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TABELA DE AGENDAMENTOS -->
+      <div class="card">
+        <div class="card-header">
+          <h3>📋 Lista de Agendamentos</h3>
+          <span id="count-label" style="font-size:13px; color:var(--text-muted);"></span>
+        </div>
+        <div class="card-body" style="padding:0;">
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Data</th>
+                  <th>Horário</th>
+                  <th>Aprendiz</th>
+                  <th>Profissional</th>
+                  <th>Especialidade</th>
+                  <th>Sala</th>
+                  <th>Duração</th>
+                  <th>Status</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="agendamentos-tbody">
+                <tr><td colspan="9"><div class="loading"><div class="spinner"></div> Carregando...</div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DE AGENDAMENTO -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modal-title">➕ Novo Agendamento</h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <form id="form-agendamento">
+        <input type="hidden" id="ag-id" />
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Data *</label>
+            <input type="date" id="ag-data" required />
+          </div>
+          <div class="form-group">
+            <label>Horário *</label>
+            <input type="time" id="ag-hora" required />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Duração (minutos)</label>
+            <select id="ag-duracao">
+              <option value="30">30 minutos</option>
+              <option value="45">45 minutos</option>
+              <option value="60" selected>1 hora</option>
+              <option value="90">1h 30min</option>
+              <option value="120">2 horas</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Status</label>
+            <select id="ag-status">
+              <option value="agendado">Agendado</option>
+              <option value="confirmado">Confirmado</option>
+              <option value="realizado">Realizado</option>
+              <option value="cancelado">Cancelado</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Aprendiz *</label>
+          <select id="ag-aprendiz" required>
+            <option value="">Selecione o aprendiz...</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Profissional *</label>
+          <select id="ag-profissional" required>
+            <option value="">Selecione o profissional...</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Sala de Atendimento</label>
+          <select id="ag-sala">
+            <option value="">Sem sala definida</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Observações</label>
+          <textarea id="ag-obs" placeholder="Informações adicionais sobre a consulta..."></textarea>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="salvarAgendamento()">💾 Salvar</button>
+    </div>
+  </div>
+</div>
+
+<script src="/js/utils.js"></script>
+<script>
+  loadUserInfo();
+
+  const statusMap = {
+    agendado:   { label: 'Agendado',   badge: 'badge-agendado',   icon: '📅' },
+    confirmado: { label: 'Confirmado', badge: 'badge-confirmado', icon: '✅' },
+    cancelado:  { label: 'Cancelado',  badge: 'badge-cancelado',  icon: '❌' },
+    realizado:  { label: 'Realizado',  badge: 'badge-realizado',  icon: '🏁' }
+  };
+
+  let allAgendamentos = [];
+  let profissionais = [];
+  let aprendizes = [];
+  let salas = [];
+
+  async function loadAll() {
+    try {
+      [allAgendamentos, profissionais, aprendizes, salas] = await Promise.all([
+        api('GET', '/api/agendamentos'),
+        api('GET', '/api/profissionais'),
+        api('GET', '/api/aprendizes'),
+        api('GET', '/api/salas')
+      ]);
+      renderTabela(allAgendamentos);
+      populateSelects();
+    } catch (err) {
+      showToast('Erro ao carregar dados: ' + err.message, 'error');
+    }
+  }
+
+  function populateSelects() {
+    const filtroProf = document.getElementById('filtro-profissional');
+    filtroProf.innerHTML = '<option value="">Todos</option>';
+    profissionais.forEach(p => {
+      const o = document.createElement('option');
+      o.value = p.id;
+      o.textContent = p.nome + (p.especialidade ? ` – ${p.especialidade}` : '');
+      filtroProf.appendChild(o);
+    });
+  }
+
+  function renderTabela(dados) {
+    const tbody = document.getElementById('agendamentos-tbody');
+    document.getElementById('count-label').textContent = `${dados.length} registro(s)`;
+
+    if (dados.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="9"><div class="empty-state">
+        <div class="empty-icon">📅</div>
+        <h4>Nenhum agendamento encontrado</h4>
+        <p>Clique em "Novo Agendamento" para criar um.</p>
+      </div></td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = dados.map(a => {
+      const s = statusMap[a.status] || statusMap.agendado;
+      return `<tr>
+        <td><strong>${formatDate(a.data)}</strong></td>
+        <td>${a.hora || '–'}</td>
+        <td>${a.aprendiz?.nome || '–'}</td>
+        <td>${a.profissional?.nome || '–'}</td>
+        <td>${a.profissional?.especialidade ? `<span class="tag">${a.profissional.especialidade}</span>` : '–'}</td>
+        <td>${a.sala?.nome || '–'}</td>
+        <td>${a.duracao ? `${a.duracao} min` : '–'}</td>
+        <td><span class="badge ${s.badge}">${s.icon} ${s.label}</span></td>
+        <td style="white-space:nowrap;">
+          <button class="btn btn-outline btn-sm" onclick="editarAgendamento('${a.id}')">✏️</button>
+          <button class="btn btn-danger btn-sm" onclick="excluirAgendamento('${a.id}')">🗑️</button>
+        </td>
+      </tr>`;
+    }).join('');
+  }
+
+  function aplicarFiltros() {
+    const data = document.getElementById('filtro-data').value;
+    const status = document.getElementById('filtro-status').value;
+    const profId = document.getElementById('filtro-profissional').value;
+
+    let filtered = allAgendamentos;
+    if (data) filtered = filtered.filter(a => a.data === data);
+    if (status) filtered = filtered.filter(a => a.status === status);
+    if (profId) filtered = filtered.filter(a => a.profissional_id === profId);
+    renderTabela(filtered);
+  }
+
+  function limparFiltros() {
+    document.getElementById('filtro-data').value = '';
+    document.getElementById('filtro-status').value = '';
+    document.getElementById('filtro-profissional').value = '';
+    renderTabela(allAgendamentos);
+  }
+
+  function openModal(ag = null) {
+    document.getElementById('modal-overlay').classList.add('open');
+    document.getElementById('modal-title').textContent = ag ? '✏️ Editar Agendamento' : '➕ Novo Agendamento';
+
+    // Preencher selects do modal
+    const selAprendiz = document.getElementById('ag-aprendiz');
+    const selProf = document.getElementById('ag-profissional');
+    const selSala = document.getElementById('ag-sala');
+
+    selAprendiz.innerHTML = '<option value="">Selecione o aprendiz...</option>';
+    aprendizes.forEach(a => {
+      const o = document.createElement('option');
+      o.value = a.id;
+      o.textContent = a.nome;
+      selAprendiz.appendChild(o);
+    });
+
+    selProf.innerHTML = '<option value="">Selecione o profissional...</option>';
+    profissionais.forEach(p => {
+      const o = document.createElement('option');
+      o.value = p.id;
+      o.textContent = p.nome + (p.especialidade ? ` – ${p.especialidade}` : '');
+      selProf.appendChild(o);
+    });
+
+    selSala.innerHTML = '<option value="">Sem sala definida</option>';
+    salas.forEach(s => {
+      const o = document.createElement('option');
+      o.value = s.id;
+      o.textContent = s.nome;
+      selSala.appendChild(o);
+    });
+
+    if (ag) {
+      document.getElementById('ag-id').value = ag.id;
+      document.getElementById('ag-data').value = ag.data || '';
+      document.getElementById('ag-hora').value = ag.hora || '';
+      document.getElementById('ag-duracao').value = ag.duracao || '60';
+      document.getElementById('ag-status').value = ag.status || 'agendado';
+      document.getElementById('ag-aprendiz').value = ag.aprendiz_id || '';
+      document.getElementById('ag-profissional').value = ag.profissional_id || '';
+      document.getElementById('ag-sala').value = ag.sala_id || '';
+      document.getElementById('ag-obs').value = ag.observacoes || '';
+    } else {
+      document.getElementById('form-agendamento').reset();
+      document.getElementById('ag-id').value = '';
+      // Data padrão = hoje
+      document.getElementById('ag-data').value = new Date().toISOString().split('T')[0];
+    }
+  }
+
+  function closeModal() {
+    document.getElementById('modal-overlay').classList.remove('open');
+  }
+
+  document.getElementById('modal-overlay').addEventListener('click', (e) => {
+    if (e.target === e.currentTarget) closeModal();
+  });
+
+  async function salvarAgendamento() {
+    const id = document.getElementById('ag-id').value;
+    const payload = {
+      data: document.getElementById('ag-data').value,
+      hora: document.getElementById('ag-hora').value,
+      duracao: document.getElementById('ag-duracao').value,
+      status: document.getElementById('ag-status').value,
+      aprendiz_id: document.getElementById('ag-aprendiz').value,
+      profissional_id: document.getElementById('ag-profissional').value,
+      sala_id: document.getElementById('ag-sala').value,
+      observacoes: document.getElementById('ag-obs').value
+    };
+
+    if (!payload.data || !payload.hora || !payload.aprendiz_id || !payload.profissional_id) {
+      showToast('Preencha os campos obrigatórios (data, hora, aprendiz e profissional)', 'error');
+      return;
+    }
+
+    try {
+      if (id) {
+        await api('PUT', `/api/agendamentos/${id}`, payload);
+        showToast('Agendamento atualizado!', 'success');
+      } else {
+        await api('POST', '/api/agendamentos', payload);
+        showToast('Agendamento criado com sucesso!', 'success');
+      }
+      closeModal();
+      loadAll();
+    } catch (err) {
+      showToast('Erro ao salvar: ' + err.message, 'error');
+    }
+  }
+
+  function editarAgendamento(id) {
+    const ag = allAgendamentos.find(a => a.id === id);
+    if (ag) openModal(ag);
+  }
+
+  async function excluirAgendamento(id) {
+    confirmDelete('Confirma a exclusão deste agendamento?', async () => {
+      try {
+        await api('DELETE', `/api/agendamentos/${id}`);
+        showToast('Agendamento excluído.', 'success');
+        loadAll();
+      } catch (err) {
+        showToast('Erro ao excluir: ' + err.message, 'error');
+      }
+    });
+  }
+
+  loadAll();
+</script>
+
+</body>
+</html>

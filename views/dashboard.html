@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IAgenda – Dashboard</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+<div id="toast-container"></div>
+
+<div class="app-layout">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">
+        <div class="sidebar-logo-icon">🏥</div>
+        <div class="sidebar-logo-text">
+          <h2>IAgenda</h2>
+          <span>Sistema de Agendamentos</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-nav">
+      <div class="nav-section-title">Menu Principal</div>
+      <a href="/dashboard" class="nav-item active" data-page="dashboard">
+        <span class="nav-icon">📊</span> Dashboard
+      </a>
+      <a href="/agendamento" class="nav-item" data-page="agendamento">
+        <span class="nav-icon">📅</span> Agendamentos
+      </a>
+      <a href="/cadastro" class="nav-item" data-page="cadastro">
+        <span class="nav-icon">📋</span> Cadastros
+      </a>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-avatar">👤</div>
+        <div class="user-details">
+          <div class="user-name" id="user-name">Carregando...</div>
+          <div class="user-role">Administrador</div>
+        </div>
+      </div>
+      <button class="btn btn-outline btn-sm btn-full" style="margin-top:8px;" onclick="logout()">
+        🚪 Sair
+      </button>
+    </div>
+  </nav>
+
+  <!-- CONTEÚDO PRINCIPAL -->
+  <div class="main-content">
+    <div class="topbar">
+      <div class="topbar-title">
+        <h1>📊 Dashboard</h1>
+        <p id="data-atual">Carregando...</p>
+      </div>
+      <div class="topbar-actions">
+        <a href="/agendamento" class="btn btn-primary btn-sm">
+          ➕ Novo Agendamento
+        </a>
+      </div>
+    </div>
+
+    <div class="page-content">
+
+      <!-- ESTATÍSTICAS -->
+      <div class="stats-grid" id="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon blue">📅</div>
+          <div class="stat-info">
+            <div class="stat-value" id="stat-total">–</div>
+            <div class="stat-label">Total de Agendamentos</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon cyan">🌅</div>
+          <div class="stat-info">
+            <div class="stat-value" id="stat-hoje">–</div>
+            <div class="stat-label">Consultas Hoje</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon green">👨‍⚕️</div>
+          <div class="stat-info">
+            <div class="stat-value" id="stat-profissionais">–</div>
+            <div class="stat-label">Profissionais</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon orange">🧒</div>
+          <div class="stat-info">
+            <div class="stat-value" id="stat-aprendizes">–</div>
+            <div class="stat-label">Aprendizes</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon red">🚪</div>
+          <div class="stat-info">
+            <div class="stat-value" id="stat-salas">–</div>
+            <div class="stat-label">Salas de Atendimento</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- GRID PRINCIPAL -->
+      <div class="content-grid">
+
+        <!-- PRÓXIMAS CONSULTAS -->
+        <div class="card" style="grid-column: 1 / -1;">
+          <div class="card-header">
+            <h3>📆 Próximas Consultas</h3>
+            <a href="/agendamento" class="btn btn-primary btn-sm">Ver Todos</a>
+          </div>
+          <div class="card-body" style="padding:0;">
+            <div class="table-container">
+              <table id="proximas-table">
+                <thead>
+                  <tr>
+                    <th>Data / Hora</th>
+                    <th>Aprendiz</th>
+                    <th>Profissional</th>
+                    <th>Especialidade</th>
+                    <th>Sala</th>
+                    <th>Status</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="proximas-tbody">
+                  <tr><td colspan="7"><div class="loading"><div class="spinner"></div> Carregando...</div></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- RESUMO DE STATUS -->
+        <div class="card">
+          <div class="card-header"><h3>📈 Resumo por Status</h3></div>
+          <div class="card-body">
+            <div id="status-summary" style="display:flex; flex-direction:column; gap:14px;">
+              <div class="loading"><div class="spinner"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ACESSO RÁPIDO -->
+        <div class="card">
+          <div class="card-header"><h3>⚡ Acesso Rápido</h3></div>
+          <div class="card-body" style="display:flex; flex-direction:column; gap:12px;">
+            <a href="/agendamento" class="btn btn-primary btn-full">
+              📅 Novo Agendamento
+            </a>
+            <a href="/cadastro#profissional" class="btn btn-accent btn-full">
+              👨‍⚕️ Cadastrar Profissional
+            </a>
+            <a href="/cadastro#aprendiz" class="btn btn-success btn-full">
+              🧒 Cadastrar Aprendiz
+            </a>
+            <a href="/cadastro#sala" class="btn btn-outline btn-full">
+              🚪 Cadastrar Sala
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/js/utils.js"></script>
+<script>
+  loadUserInfo();
+
+  // Data atual
+  const hoje = new Date();
+  document.getElementById('data-atual').textContent =
+    hoje.toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+  // Status labels
+  const statusMap = {
+    agendado:   { label: 'Agendado',   badge: 'badge-agendado',   icon: '📅' },
+    confirmado: { label: 'Confirmado', badge: 'badge-confirmado', icon: '✅' },
+    cancelado:  { label: 'Cancelado',  badge: 'badge-cancelado',  icon: '❌' },
+    realizado:  { label: 'Realizado',  badge: 'badge-realizado',  icon: '🏁' }
+  };
+
+  async function loadDashboard() {
+    try {
+      const data = await api('GET', '/api/dashboard');
+
+      // Estatísticas
+      document.getElementById('stat-total').textContent = data.totais.agendamentos;
+      document.getElementById('stat-hoje').textContent = data.totais.agendamentosHoje;
+      document.getElementById('stat-profissionais').textContent = data.totais.profissionais;
+      document.getElementById('stat-aprendizes').textContent = data.totais.aprendizes;
+      document.getElementById('stat-salas').textContent = data.totais.salas;
+
+      // Próximas consultas
+      const tbody = document.getElementById('proximas-tbody');
+      if (data.agendamentosProximos.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state">
+          <div class="empty-icon">📅</div>
+          <h4>Nenhum agendamento</h4>
+          <p>Clique em "Novo Agendamento" para começar.</p>
+        </div></td></tr>`;
+      } else {
+        tbody.innerHTML = data.agendamentosProximos.map(a => {
+          const s = statusMap[a.status] || statusMap.agendado;
+          return `<tr>
+            <td><strong>${formatDate(a.data)}</strong> ${a.hora ? `<span style="color:var(--text-muted)">${a.hora}</span>` : ''}</td>
+            <td>${a.aprendiz.nome || '–'}</td>
+            <td>${a.profissional.nome || '–'}</td>
+            <td><span class="tag">${a.profissional.especialidade || '–'}</span></td>
+            <td>${a.sala.nome || '–'}</td>
+            <td><span class="badge ${s.badge}">${s.icon} ${s.label}</span></td>
+            <td><a href="/agendamento" class="btn btn-outline btn-sm">Ver</a></td>
+          </tr>`;
+        }).join('');
+      }
+
+      // Resumo por status
+      const statusDiv = document.getElementById('status-summary');
+      const total = data.totais.agendamentos || 1;
+      statusDiv.innerHTML = Object.entries(data.statusCount).map(([key, count]) => {
+        const s = statusMap[key] || {};
+        const pct = Math.round((count / total) * 100);
+        return `<div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
+            <span style="font-size:13px; font-weight:600;">${s.icon || ''} ${s.label || key}</span>
+            <span class="badge ${s.badge || ''}">${count}</span>
+          </div>
+          <div style="background:var(--border); border-radius:4px; height:8px; overflow:hidden;">
+            <div style="width:${pct}%; height:100%; background:var(--primary); border-radius:4px; transition:width 0.5s;"></div>
+          </div>
+        </div>`;
+      }).join('');
+
+    } catch (err) {
+      showToast('Erro ao carregar dashboard: ' + err.message, 'error');
+    }
+  }
+
+  loadDashboard();
+</script>
+
+</body>
+</html>
